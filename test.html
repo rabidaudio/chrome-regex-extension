@@ -3,6 +3,11 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script type="text/javascript">
 //lovely icons http://somerandomdude.com/work/bitcons/
+//regex syntax http://w3schools.com/jsref/jsref_obj_regexp.asp
+
+var my_reg_exprs = new Array();
+var my_reg_repls = new Array();
+
 
 $(document).ready(function(){
     btn_add();
@@ -10,7 +15,19 @@ $(document).ready(function(){
 });
 
 function btn_save(){
-    alert("Save");
+    var count = parseInt($("#fields").attr("count"));
+    my_reg_exprs= new Array();
+    my_reg_repls= new Array();
+    for(var i=0; i<count;i++){
+        var input = $("#fields input[name='in"+(i+1)+"']").val();
+        if (input != ""){
+            my_reg_exprs[i]= new RegExp( input, "g" );
+            my_reg_repls[i] = $("#fields input[name='out"+(i+1)+"']").val();
+        }
+
+    }
+    console.log(my_reg_exprs);
+    console.log(my_reg_repls);
 }
 
 function btn_add(){
@@ -24,12 +41,37 @@ function btn_add(){
 function btn_remove(){
     var count = parseInt($("#fields").attr("count"));
     if (count>1){
-        $("#in"+count).remove();
+        $("#fields input[name$='"+count+"']").remove();
         $("#out"+count).remove();
         $("#fields br").filter(":last").remove();
         count--;
         $("#fields").attr("count",count);
     }
+}
+//http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
+function run_replacements(){
+    /*var p = $( "body" ).find("*").contents().filter(function(){
+        return (this.nodeType === 3 && $(this).text() != "" ); //Node.TEXT_NODE 
+    }).parent().each(function(index,element){
+        console.log(element);
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            console.log(text);
+            return text;
+        });
+    });*/
+    $("body").find("*").contents().filter(function(){
+        return (this.nodeType === 3 && this.nodeValue.length>1);
+    }).parent().each(function(index,element){
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            return text;
+        });
+    });
 }
 </script>
 </head>
@@ -37,14 +79,21 @@ function btn_remove(){
 <form>
 <div>
 <span id="fields" count=0>
-<!--<br/><input type="text" name="in1" id="in1"/><input type="text" name="out1" id="out1"/>
-<br/><input type="text" name="in2" id="in2"/><input type="text" name="out2" id="out2"/>-->
 </span>
 <img src="icons/subtract.png" onClick="btn_remove()"/>
 <img src="icons/add.png" onClick="btn_add()"/>
 </div>
 <input type="button" onClick="btn_save()" value="Save">
+<input type="button" onClick="run_replacements()" value="Run">
 </form>
-
+<p>
+Test text foobar #yolo all teh feels
+</p>
+<span>a foobar span element
+<ul>
+<li>deep nest</li>
+<li>foobar</li>
+</ul>
+</span>
 </body>
 </html>
