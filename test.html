@@ -16,7 +16,7 @@ function btn_save(){
 function btn_add(){
     var count = parseInt($("#fields").attr("count"));
     count++;
-    var input_code = "<br/><input type=\"text\" name=\"in"+count+"\" id=\"in"+count+"\"/><input type=\"text\" name=\"out"+count+"\" id=\"out"+count+"\"/>";
+    var input_code = "<br/><input type=\"text\" name=\"in"+count+"\" id=\"in"+count+"\" placeholder=\"Input\"/><input type=\"text\" name=\"out"+count+"\" id=\"out"+count+"\" placeholder=\"Replacement\"/>";
     $("#fields").append(input_code);
     $("#fields").attr("count",count);
 }
@@ -35,13 +35,15 @@ function btn_remove(){
 </head>
 <body>
 <form>
-<div id="fields" count=0>
+<div>
+<span id="fields" count=0>
 <!--<br/><input type="text" name="in1" id="in1"/><input type="text" name="out1" id="out1"/>
 <br/><input type="text" name="in2" id="in2"/><input type="text" name="out2" id="out2"/>-->
+</span>
+<img src="icons/subtract.png" onClick="btn_remove()"/>
+<img src="icons/add.png" onClick="btn_add()"/>
 </div>
 <input type="button" onClick="btn_save()" value="Save">
-<input type="button" onClick="btn_add()" value="Add more">
-<input type="button" onClick="btn_remove()" value="remove">
 </form>
 
 </body>
