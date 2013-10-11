@@ -1,0 +1,48 @@
+<html>
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+//lovely icons http://somerandomdude.com/work/bitcons/
+
+$(document).ready(function(){
+    btn_add();
+    btn_add();
+});
+
+function btn_save(){
+    alert("Save");
+}
+
+function btn_add(){
+    var count = parseInt($("#fields").attr("count"));
+    count++;
+    var input_code = "<br/><input type=\"text\" name=\"in"+count+"\" id=\"in"+count+"\"/><input type=\"text\" name=\"out"+count+"\" id=\"out"+count+"\"/>";
+    $("#fields").append(input_code);
+    $("#fields").attr("count",count);
+}
+
+function btn_remove(){
+    var count = parseInt($("#fields").attr("count"));
+    if (count>1){
+        $("#in"+count).remove();
+        $("#out"+count).remove();
+        $("#fields br").filter(":last").remove();
+        count--;
+        $("#fields").attr("count",count);
+    }
+}
+</script>
+</head>
+<body>
+<form>
+<div id="fields" count=0>
+<!--<br/><input type="text" name="in1" id="in1"/><input type="text" name="out1" id="out1"/>
+<br/><input type="text" name="in2" id="in2"/><input type="text" name="out2" id="out2"/>-->
+</div>
+<input type="button" onClick="btn_save()" value="Save">
+<input type="button" onClick="btn_add()" value="Add more">
+<input type="button" onClick="btn_remove()" value="remove">
+</form>
+
+</body>
+</html>
