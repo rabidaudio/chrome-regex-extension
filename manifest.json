@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+
+  "name": "No more feels",
+  "description": "This extension replaces text you don't want to see with text you do.",
+  "version": "0.2",
+  
+  "content_scripts": [
+    {
+      "matches": ["*://*"], 
+      "css": ["replace.css"],
+      "js": ["jquery.js", "replace.js"],
+      "run_at": "document_start"
+    }
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/tongue.png",
+    "default_popup": "test.html"
+  },
+  "permissions": [
+    "tabs", "*"
+  ]
+}

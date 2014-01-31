@@ -1,0 +1,224 @@
+//$(document).ready(function(){
+    //get regexs
+    //run_replacements();
+//}
+
+var regex = {};
+chrome.extension.sendRequest(payload, function(response) {
+    regex = response; //{exprs: my_reg_exprs, repls: my_reg_repls}
+});
+
+var matches=false;
+for(var i=0;i<regex.exprs.length;i++){
+    matches = matches || document.body.innerText.match(regex.exprs[i]);
+}
+if (matches){
+    run_replacements();
+}
+
+
+
+
+
+    /*var p = $( "body" ).find("*").contents().filter(function(){
+        return (this.nodeType === 3 && $(this).text() != "" ); //Node.TEXT_NODE 
+    }).parent().each(function(index,element){
+        console.log(element);
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            console.log(text);
+            return text;
+        });
+    });*/
+    /*$("body").find("*").contents().filter(function(){
+        return (this.nodeType === 3 && this.nodeValue.length>1);
+    }).parent().each(function(index,element){
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            return text;
+        });
+    });*/
+    
+    
+//$($('body')[0].childNodes).filter( function(){return /foobar/.test($(this).text()) }).each( function(i,e){ console.log(e); });
+
+
+
+function find_root(element, search, replacement){
+    console.log("##############################");
+    console.log(element);
+    $(element.childNodes)
+        .filter( function(){
+            return (allowed_replace(this) && search.test($(this).text()) )
+        })
+        .each(function(i,e){
+            //console.log(e);
+            if( search.test($(e).text())){
+                if(e.nodeType === 3){
+                    console.log("Match: "+$(e).text() );
+                    e.replaceWholeText( $(e).text().replace(search, replacement) );
+                }else{
+                    find_root(e,search, replacement);
+                }
+            }
+        });
+}
+
+
+
+
+
+
+//http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
+function run_replacements(){
+    /*var p = $( "body" ).find("*").contents().filter(function(){
+        return (this.nodeType === 3 && $(this).text() != "" ); //Node.TEXT_NODE 
+    }).parent().each(function(index,element){
+        console.log(element);
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            console.log(text);
+            return text;
+        });
+    });*/
+    $("body").find("*").contents().filter(function(){
+        return (this.nodeType === 3 && this.nodeValue.length>1);
+    }).parent().each(function(index,element){
+        $(element).text(function(index,text){
+            for(var i=0;i<my_reg_exprs.length;i++){
+                text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+            }
+            return text;
+        });
+    });
+}
+
+/*
+test = new RegExp("foobar[!<]*(?=<)","g")
+newline= new RegExp("(\n|\r)","g")
+$("body").html().replace(test,"xxxx")
+*/
+
+
+//http://stackoverflow.com/questions/1444409/in-javascript-how-can-i-replace-text-in-an-html-page-without-affecting-the-tags
+
+/*function replaceInElement(element, find, replace) {
+    // iterate over child nodes in reverse, as replacement may increase
+    // length of child node list.
+    for (var i= element.childNodes.length; i-->0;) {
+        var child= element.childNodes[i];
+        if (child.nodeType==1) { // ELEMENT_NODE
+            var tag= child.nodeName.toLowerCase();
+            if (tag!='style' && tag!='script') // special case, don't touch CDATA elements
+                replaceInElement(child, find, replace);
+        } else if (child.nodeType==3) { // TEXT_NODE
+            replaceInText(child, find, replace);
+        }
+    }
+}
+function replaceInText(text, find, replace) {
+    var match;
+    var matches= [];
+    while (match= find.exec(text.data))
+        matches.push(match);
+    for (var i= matches.length; i-->0;) {
+        match= matches[i];
+        text.splitText(match.index);
+        text.nextSibling.splitText(match[0].length);
+        text.parentNode.replaceChild(replace(match), text.nextSibling);
+    }
+}
+
+// keywords to match. This *must* be a 'g'lobal regexp or it'll fail bad
+var find= /\b(keyword|whatever)\b/gi;
+
+// replace matched strings with wiki links
+replaceInElement(document.body, find, function(match) {
+    var link= document.createElement('a');
+    link.href= 'http://en.wikipedia.org/wiki/'+match[0];
+    link.appendChild(document.createTextNode(match[0]));
+    return link;
+});*/
+
+//function replaceText(index, oldhtml)
+
+
+
+    /*for(var i=nodearray.length; i-->0;){
+        var child = nodearray[i];
+        if (child.nodeType==1){
+            //element
+            var tag= child.nodeName.toLowerCase();
+            if (tag!='style' && tag!='script' && child.data!="\n")
+                handleNode(child);
+        } else if (child.nodeType==3) {
+            console.log( $(child).html() ); 
+            //text
+            $(child).html(function(index, oldhtml){
+                var reg = new RegExp("foobar","gi");
+                console.log(oldhtml);
+                return oldhtml;//.replace(reg, "xxx");          
+            });
+        }*/
+
+//var whitespace = new RegExp("^\\s$");
+
+
+////////////////////////////////////////////
+
+/*
+for(var i=0;i<my_reg_exprs.length;i++){
+    text=text.replace(my_reg_exprs[i],my_reg_repls[i]);
+}
+*/
+
+var my_reg_exprs = [ new RegExp("foobar"), new RegExp("teh feels") ];
+var my_reg_repls = [ 'BARFOO', 'FEELINGS' ];
+
+function handleNode(element){
+    if(!element)
+        var element = document.body;
+    //$(element).contents().each( function(index, child){
+    //  removed JQuery:
+    for(var i=element.childNodes.length; i-->0; ){
+        var child = element.childNodes[i];
+        if( child.nodeType==1 ){
+            //element
+            console.log("element");
+            var tag= child.nodeName.toLowerCase();
+            if (tag!='style' && tag!='script' )
+                    //&& !whitespace.exec(child.data) )
+                handleNode(child);
+        } else if ( child.nodeType==3 ) {
+            //text, glorious text
+            console.log("text");
+            
+           // for(var k=0; k<my_reg_exprs.length; k++){
+                var reg = my_reg_exprs[0];
+                var rep = "xxx"; //my_reg_repls[0];
+                console.log(reg + " - " + rep);
+                
+                var matched;
+                var matches = [];
+                while( matched=reg.exec(child.data) ){
+                    matches.push(matched);
+                }
+                console.log( matches[0] );
+                for(var j=matches.length; j-->0; ){
+                    var matched = matches[j];
+                    child.splitText(matched.index);
+                    child.nextSibling.splitText(matched[0].length);
+                    child.nextSibling.data = rep;
+                    //TODO allow to replace witch node rather than 
+                }
+            //}
+        }
+    }
+}
+handleNode(document.body);
