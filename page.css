@@ -13,3 +13,22 @@ body{
     text-align: center;
     margin-bottom: -12px;
 }
+.wl{
+    border-radius: 20px;
+    margin: 2px;
+    padding: 10px;
+    font-weight: bold;
+    width: 200px;
+    text-align: center;
+}
+.wl h1{
+    margin: 0;
+}
+.not-whitelisted{
+    background-color: aliceblue;
+    color: blue;
+}
+.whitelisted{
+    background-color: black;
+    color: white;
+}

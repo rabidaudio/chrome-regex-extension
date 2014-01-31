@@ -1,21 +1,44 @@
 var exprs = [];
 var banned_tags = ["script", "style"];
+var whitelisted = false;
 
 $(document).ready(function(){
     get_data();
 });
+
+function set_whitelist(value){
+    $('#ntf_wl').attr('status', value.toString());
+    if( value ){
+        $('#ntf_wl').text('Allow replacements on this site.');
+        whitelisted=true;
+    }else{
+        $('#ntf_wl').text('Block replacements on this site.');
+        whitelisted=false;
+    }
+}
+
+function toggle_whitelist(){
+    set_whitelist( $('#ntf_wl').attr('status') == 'false' );
+     chrome.extension.sendMessage({
+        command: "whitelist",
+        url: document.location,
+        whitelisted: whitelisted
+    });
+}
 
 function get_data(){
     chrome.extension.sendMessage({ command: "data_request"}, function(response){
         console.log(response);
         exprs=response.exprs;
         banned_tags=response.banned_tags;
+        whitelisted = response.whitelsited;
         
         $('#txt_banned_tags').val(banned_tags.join(" "));
         $('#btn_more').click(btn_more);
         $('#btn_save').click(btn_save);
         $('#btn_add').click(btn_add);
         $('#btn_remove').click(btn_remove);
+        set_whitelist(whitelisted);
         if(exprs.length>0){
             for(var i=0; i<exprs.length; i++){
                 console.log("adding with data");
@@ -51,7 +74,8 @@ function btn_save(){
     var data = {
         command: "data_update",
         banned_tags: banned_tags,
-        exprs: exprs
+        exprs: exprs,
+        whitelisted: whitelisted
     };
     console.log(data);
     chrome.extension.sendMessage(data);
