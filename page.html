@@ -1,27 +1,28 @@
 <html>
 <head>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="page.css">
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="page.js"></script>
 <link rel="stylesheet" href="page.css">
 </head>
 <body>
     <form>
         <div>
+        <div class="ci">Case Sensitive?</div>
         <span id="fields" count=0>
         </span>
-            <img src="icons/subtract.png" onClick="btn_remove()"/>
-            <img src="icons/add.png" onClick="btn_add()"/>
+            <img id="btn_remove" src="icons/subtract.png""/>
+            <img id="btn_add" src="icons/add.png"/>
         </div>
-        <input id="btn_save" type="button" onClick="save()" value="Save">
-        <input id="btn_more" type="button" onClick="more()" value="More">
-        <input id="btn_run" type="button" onClick="run_replacements()" value="Run">
-        <span id="ntf_saved">Saved!</span>
         <div id="more" style="display: none;">
             Tags to not make replacements (separated by spaces)<br/>
-            <span>Note: removing the script tag from this list will probably break
-            most websites and may leave you open to security vulnerabilities. Use
-            at your own risk.</span><br/><input type="text" id="txt_banned_tags">
+            <input type="text" id="txt_banned_tags"><br/>
+            <span class="note">Note: removing the script and style tags from this
+            list will probably break most websites and may leave you open to security
+            vulnerabilities. Use at your own risk.</span>
         </div>
+        <input id="btn_more" type="button" value="More">
+        <input id="btn_save" type="button" value="Save">
+        <span id="ntf_saved" style="display: none; color: green;">Saved!</span>
     </form>
 </body>
 </html>

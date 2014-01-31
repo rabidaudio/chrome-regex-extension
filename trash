@@ -1,3 +1,54 @@
+function find_root(element, searches){ //searches example: [{s: /foobar/, r: "barfoo"}, {s: "dog", r: "doge"}]
+    //console.log("##############################");
+    //console.log(element);
+    $(element.childNodes)
+        .filter( function(){
+            if( !allowed_replace(this) ) return false;
+            for(var i=0; i<searches.length; i++){
+                if( searches[i].s.test( $(this).text() ) )
+                    return true;
+            }
+            return false;
+        })
+        .reverse()
+        .each(function(i,e){
+            var matched_searches=[];
+            for(var i=0; i<searches.length; i++){
+                if( searches[i].s.test( $(this).text() ) )
+                    matched_searches.push( searches[i] );
+            }
+            if( matched_searches.length>0 ){
+                if(e.nodeType === e.TEXT_NODE){
+                    //console.log("Match: "+$(e).text() );
+                    var content = e.nodeValue;
+                    for(var i=matched_searches.length; i-->0; ){
+                         var re = matched_searches[i].s;
+                         var result = re.exec(content);
+                         if( result !== null ){
+                            var p = e.parentNode;
+                            //console.log(result);
+                            var f = e.splitText(result.index);                  //split text node into two nodes
+                            //console.log("\t"+f.nodeValue);
+                            f.nodeValue = f.nodeValue.substr(result[0].length); //remove original
+                            //console.log("Became ->"+f.nodeValue);
+                            var span = document.createElement('span');          //create a new span node
+                            span.setAttribute('class','cre-replace');           //      and set it up
+                            p.insertBefore(span,f);                             //stick it in after the first text
+                            span.innerText = result[0].replace(result[0], matched_searches[i].r);
+                            //console.log( p );
+                         }
+                    }
+                }else{
+                    find_root(e,matched_searches);
+                }
+            }
+        });
+}
+
+
+
+
+
 //$(document).ready(function(){
     //get regexs
     //run_replacements();

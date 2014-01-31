@@ -4,21 +4,26 @@
   "name": "No more feels",
   "description": "This extension replaces text you don't want to see with text you do.",
   "version": "0.2",
-  
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
   "content_scripts": [
     {
-      "matches": ["*://*"], 
+      "matches": ["http://*/*"], 
       "css": ["replace.css"],
-      "js": ["jquery.js", "replace.js"],
-      "run_at": "document_start"
+      "js": ["replace.js"],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
-
-  "browser_action": {
-    "default_icon": "icons/tongue.png",
-    "default_popup": "test.html"
+  "page_action": {
+    "default_icon": "icons/off.png",
+    "default_popup": "page.html",
+    "default_title": "Replacement"
   },
   "permissions": [
-    "tabs", "*"
+    "tabs"
   ]
 }
