@@ -8,17 +8,26 @@
     <form>
         <div>
         <div class="ci">Case Sensitive?</div>
-        <span id="fields" count=0>
+        <span id="fields" count="0">
         </span>
             <img id="btn_remove" src="icons/subtract.png""/>
             <img id="btn_add" src="icons/add.png"/>
         </div>
         <div id="more" style="display: none;">
-            Tags to not make replacements (separated by spaces)<br/>
-            <input type="text" id="txt_banned_tags"><br/>
+            <p>
+            Tags to not make replacements in (separated by spaces)<br/>
+            <input type="text" id="txt_banned_tags" style="width: 300px;"><br/>
             <span class="note">Note: removing the script and style tags from this
             list will probably break most websites and may leave you open to security
             vulnerabilities. Use at your own risk.</span>
+            </p><p>
+            This extension uses
+            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp">Javascript's RegExp</a>
+            object constructor on items where regular expressions are enabled. That means
+            you can use normal regex syntax for pattern matching. If you don't know what
+            this means, check out <a href="wki.pe/Regular_Expressions">regular expressions</a>
+            (or forget I said anything).
+            </p>
         </div>
         <input id="btn_more" type="button" value="More">
         <input id="btn_save" type="button" value="Save">

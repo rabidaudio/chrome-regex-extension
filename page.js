@@ -1,40 +1,62 @@
-var my_reg_exprs = new Array();
-var my_reg_repls = new Array();
+var exprs = [];
 var banned_tags = ["script", "style"];
 
 $(document).ready(function(){
-    //TODO get data from background page
-    $('#txt_banned_tags').val(banned_tags.join(" "));
-    $('#btn_more').click(btn_more);
-    $('#btn_save').click(btn_save);
-    $('#btn_add').click(btn_add);
-    $('#btn_remove').click(btn_remove);
-    btn_add();
-    btn_add();
-//chrome.extension.onRequest.addListener(function(update_exprs, sender, sendResponse){
-    //do stuff
-//    chrome.pageAction.show(sender.tab.id);
-//    sendResponse({exprs: my_reg_exprs, repls: my_reg_repls});
+    get_data();
 });
 
+function get_data(){
+    chrome.extension.sendMessage({ command: "data_request"}, function(response){
+        console.log(response);
+        exprs=response.exprs;
+        banned_tags=response.banned_tags;
+        
+        $('#txt_banned_tags').val(banned_tags.join(" "));
+        $('#btn_more').click(btn_more);
+        $('#btn_save').click(btn_save);
+        $('#btn_add').click(btn_add);
+        $('#btn_remove').click(btn_remove);
+        if(exprs.length>0){
+            for(var i=0; i<exprs.length; i++){
+                console.log("adding with data");
+                var n=btn_add();
+                $('#in-'+n).val( exprs[i].s || "" );
+                $('#out-'+n).val( exprs[i].r || "" );
+                if(exprs[i].i) $('#case-'+n).attr('checked', true);
+            }
+        }else{
+            console.log("adding blank");
+            btn_add();
+        }
+        console.log("adding last blank");
+        btn_add();
+    });
+}
 
 function btn_save(){
     var count = parseInt($("#fields").attr("count"));
-    my_reg_exprs= new Array();
-    my_reg_repls= new Array();
-    for(var i=0; i<count;i++){
-        var input = $("#fields input[name='in-"+(i+1)+"']").val();
-        if (input !== ""){
-            my_reg_exprs[i]= new RegExp( input, ($("#fields input[name='case-"+(i+1)+"']:checked").length ? "" : "i") );
-            my_reg_repls[i] = $("#fields input[name='out-"+(i+1)+"']").val();
+    exprs=[];
+    for(var i=0; i<=count;i++){
+        var input = $("#fields input[name='in-"+i+"']").val();
+        if (input != ""){
+            exprs.push({
+                s: input,
+                r: $("#fields input[name='out-"+i+"']").val(),
+                i: ($("#fields input[name='case-"+i+"']:checked").length>0)
+            });
         }
 
     }
     banned_tags = $('#txt_banned_tags').val().split(" ");
-    //TODO send data to background page
+    var data = {
+        command: "data_update",
+        banned_tags: banned_tags,
+        exprs: exprs
+    };
+    console.log(data);
+    chrome.extension.sendMessage(data);
     $('#ntf_saved').fadeIn(100).fadeOut(1000);
-    console.log(my_reg_exprs);
-    console.log(my_reg_repls);
+    console.log(exprs);
 }
 
 function btn_add(){
@@ -46,6 +68,7 @@ function btn_add(){
             '<input type="checkbox" '+ 'name="case-' +count+ '" id="case-'+count+ '"/>');
     $("#fields").append(input_code);
     $("#fields").attr("count",count);
+    return count-1;
 }
 
 function btn_remove(){

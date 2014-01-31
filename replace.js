@@ -20,7 +20,7 @@ Where n or nn are decimal digits, inserts the nth parenthesized submatch string,
 var banned_tags = ["script", "style"];
 
 function run_replacements(exprs){
-    find_root(document.body, [{s: /foobar/i, r: "barfoo"}]);
+    find_root(document.body, [{s: "foobar", r: "barfoo", i: false}]);
     return true;
 }
 
@@ -32,14 +32,15 @@ function find_root(element, searches){
 
         var matched_searches=[];
         for(var i=0; i<searches.length; i++){
-            if( searches[i].s.test((e.nodeValue || e.innerText || "")) )
+            var s = new RegExp(searches[i].s, (searches[i].i ? "":"i"));
+            if( s.test((e.nodeValue || e.innerText || "")) )
                 matched_searches.push( searches[i] );
         }
         if( matched_searches.length>0 ){
             if(e.nodeType === e.TEXT_NODE){
                 var content = e.nodeValue;
                 for(var i=matched_searches.length; i-->0; ){
-                     var re = matched_searches[i].s;
+                     var re = new RegExp(matched_searches[i].s, (searches[i].i ? "":"i"));//matched_searches[i].s;
                      var result = re.exec(content);
                      if( result !== null ){
                         var p = e.parentNode;

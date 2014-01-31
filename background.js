@@ -24,6 +24,10 @@ function get_data(){
   dataman('banned_tags', banned_tags);
   dataman('exprs', exprs);
   dataman('whitelist', whitelist);
+  return {
+    exprs: exprs,
+    banned_tags: banned_tags
+  };
 }
 
 function set_data(){
@@ -53,3 +57,17 @@ function checkWhitelist(tabId, change, tab) {
 };
 
 chrome.tabs.onUpdated.addListener(checkWhitelist);
+
+chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+  console.log(request);
+  if(request.command === "data_request"){
+    var data = get_data();
+    data.whitelisted=false;//TODO
+    sendResponse(data);
+  }else if(request.command === "data_update"){
+    banned_tags=request.banned_tags;
+    exprs=request.exprs;
+    //TODO whitelisted
+    set_data();
+  }
+});
