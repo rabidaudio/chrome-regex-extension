@@ -18,9 +18,11 @@ Where n or nn are decimal digits, inserts the nth parenthesized submatch string,
 */
 
 var banned_tags = ["script", "style"];
+var default_css = "color:red; background:black; font-weight: bolder;";
+var replacement_count = 0;
 
 function run_replacements(exprs){
-    find_root(document.body, [{s: "foobar", r: "barfoo", i: false}]);
+    find_root(document.body, exprs); //[{s: "foobar", r: "barfoo", i: false}]);
     return true;
 }
 
@@ -36,23 +38,25 @@ function find_root(element, searches){
             if( s.test((e.nodeValue || e.innerText || "")) )
                 matched_searches.push( searches[i] );
         }
-        if( matched_searches.length>0 ){
+        if( matched_searches.length>0 ){    //TODO this mess can be cleaned up a little bit
             if(e.nodeType === e.TEXT_NODE){
-                var content = e.nodeValue;
-                for(var i=matched_searches.length; i-->0; ){
-                     var re = new RegExp(matched_searches[i].s, (searches[i].i ? "":"i"));//matched_searches[i].s;
-                     var result = re.exec(content);
-                     if( result !== null ){
+                    var content = e.nodeValue;
+                    var m = matched_searches.pop();
+                    var re = new RegExp(m.s, (m.i ? "":"i"));
+                    var result = re.exec(content);
+                    if( result !== null ){
                         var p = e.parentNode;
                         var f = e.splitText(result.index);                  //split text node into two nodes
                         f.nodeValue = f.nodeValue.substr(result[0].length); //remove original
                         var span = document.createElement('span');          //create a new span node
-                        span.setAttribute('class','cre-replace');           //      and set it up
+                        span.setAttribute('style', m.c || "");              //      and set it up
                         span.setAttribute('title', result[0])
                         p.insertBefore(span,f);                             //stick it in after the first text
-                        span.innerText = result[0].replace(result[0], matched_searches[i].r);
-                     }
-                }
+                        span.innerText = result[0].replace(re, m.r);
+                        replacement_count++;
+                    }
+                    if( matched_searches.length>0 )                 //The node has changed at this point, so
+                        find_root(p, matched_searches);             //run again from the parent
             }else{
                 find_root(e, matched_searches);
             }
@@ -65,6 +69,7 @@ if (window == top) {
     console.log( req );
     if( req.command === "execute" ){
       banned_tags = req.banned_tags;
+      default_css = req.default_css;
       sendResponse(run_replacements(req.exprs));
     }
   });

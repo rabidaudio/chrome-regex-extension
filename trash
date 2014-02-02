@@ -1,3 +1,25 @@
+        if( matched_searches.length>0 ){
+            if(e.nodeType === e.TEXT_NODE){
+                var content = e.nodeValue;
+                for(var i=matched_searches.length; i-->0; ){
+                     var re = new RegExp(matched_searches[i].s, (searches[i].i ? "":"i"));//matched_searches[i].s;
+                     var result = re.exec(content);
+                     if( result !== null ){
+                        var p = e.parentNode;
+                        var f = e.splitText(result.index);                  //split text node into two nodes
+                        f.nodeValue = f.nodeValue.substr(result[0].length); //remove original
+                        var span = document.createElement('span');          //create a new span node
+                        span.setAttribute('class','cre-replace');           //      and set it up
+                        span.setAttribute('title', result[0])
+                        p.insertBefore(span,f);                             //stick it in after the first text
+                        span.innerText = result[0].replace(re, matched_searches[i].r);
+                     }
+                }
+            }else{
+
+
+
+
 function find_root(element, searches){ //searches example: [{s: /foobar/, r: "barfoo"}, {s: "dog", r: "doge"}]
     //console.log("##############################");
     //console.log(element);

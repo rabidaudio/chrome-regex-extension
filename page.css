@@ -1,6 +1,12 @@
 body{
     font-size: small;
 }
+input[type="text"]{
+    width: 150px;
+}
+table{
+    font-size: small;
+}
 .note{
     color:grey;
     font-style: italic;
