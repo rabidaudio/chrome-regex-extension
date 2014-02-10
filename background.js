@@ -74,7 +74,7 @@ function checkWhitelist(tabId, change, tab) {
 chrome.tabs.onUpdated.addListener(checkWhitelist);
 
 chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-  console.log(request);
+  //console.log(request);
   if(request.command === "data_request"){
     var data = get_data();
     data.whitelisted=false;//TODO

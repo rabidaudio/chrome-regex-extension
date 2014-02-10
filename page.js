@@ -55,6 +55,8 @@ function get_data(){
         }
         console.log("adding last blank");
         btn_add();
+        
+        $('*').focus( btn_more);
     });
 }
 
@@ -97,6 +99,17 @@ function manual_color(index){
             .change();
 }
 
+function unfocus_css(n){
+    //$('form *').filter(function(){  return ( parseInt(($(this).attr('id') || "").split("-").reverse()[0]) === n ); })
+    
+}
+
+function show_css(n){
+    
+    $('div[id|="css"]').hide();
+    $('#css-'+n).show();
+}
+
 function make_space_for_picker(index){
     var min_width = $('#colorH-'+index+' + div').position().top + 170;
     var window_height = $(window).height();
@@ -135,7 +148,7 @@ function btn_save(){
 }
 
 function btn_add(data){
-    if(data  ===undefined) data={};
+    if(data  ===undefined) data  ={};
     if(data.s===undefined) data.s="";
     if(data.r===undefined) data.r="";
     if(data.i===undefined) data.i=false;
@@ -147,20 +160,23 @@ function btn_add(data){
             '<input type="text" '    + 'name="in-'   +count+ '" id="in-'   +count+ '" placeholder="Input"/>'+
             '<input type="text" '    + 'name="out-'  +count+ '" id="out-'  +count+ '" placeholder="Replacement"/>'+
             '<input type="checkbox" '+ 'name="case-' +count+ '" id="case-' +count+ '"/>'+
-            '<img id="btn-css-'  +count+'" src="icons/equalizer.png">'+
-            '<div id="css-'     +count+'" style="display: none;">'+
-                '<table><tr><td>'+
-                //'<label for="colorT-'+count+'">Text</label>'+
-                '<input type="text" name="colorT-'+count+ '" id="colorT-'+count+ '" data-text="txt"/>'+
-                //'Text color'+
-                //'<label for="colorH-'+count+'">Highlight</label>'+
-                '<input type="text" name="colorH-'+count+ '" id="colorH-'+count+ '" data-text="bg"/>'+
-                //'Highlight color'+
-                '</td><td>'+
-                '<textarea id="raw-css-'+count+'" rows="4" cols="20"></textarea>'+
-                '</td></tr></table>'+
-            '</div>'+'</span>');
+            //'<img id="btn-css-'  +count+'" src="icons/equalizer.png">'+
+            '</span>');
     $("#fields").append(input_code);
+    $('#css_block').append(
+        '<div id="css-'     +count+'" style="display: none;">'+
+            '<table><tr><td>'+
+            //'<label for="colorT-'+count+'">Text</label>'+
+            '<input type="text" name="colorT-'+count+ '" id="colorT-'+count+ '" data-text="txt"/>'+
+            //'Text color'+
+            //'<label for="colorH-'+count+'">Highlight</label>'+
+            '<input type="text" name="colorH-'+count+ '" id="colorH-'+count+ '" data-text="bg"/>'+
+            //'Highlight color'+
+            '</td><td>'+
+            '<textarea id="raw-css-'+count+'" rows="4" cols="20"></textarea>'+
+            '</td></tr></table>'+
+        '</div>'
+    );
     $("#fields").attr("count",count);
     $('#in-'+count).val(data.s);
     $('#out-'+count).val(data.r);
@@ -181,8 +197,16 @@ function btn_add(data){
     });
     $('#colorT-'+count+' + div').click( function(){ make_space_for_picker(count); });
     $('#colorH-'+count+' + div').click( function(){ make_space_for_picker(count); });
+    
     $('#css-'+count).hide();
-    $('#btn-css-'+count).click(function(){ $('#css-'+count).toggle(); });
+    //$('#btn-css-'+count).click(function(){ $('#css-'+count).toggle(); });
+    //$('#in-'+count).focusin( function(){ show_css(count); });
+    //$('#out-'+count).focusin(function(){ show_css(
+    
+    //TODO fix the focus business
+    //$('form *').filter(function(){  return ( parseInt(($(this).attr('id') || "").split("-").reverse()[0]) === count ); })
+    //    .focusin( btn_more);//function(){ $('css-'+count).show(); } );
+    
     $('#raw-css-'+count).focusout(function(){ manual_color(count); });
     return count-1;
 }

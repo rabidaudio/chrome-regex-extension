@@ -66,7 +66,7 @@ function find_root(element, searches){
 
 if (window == top) {
   chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
-    console.log( req );
+    //console.log( req );
     if( req.command === "execute" ){
       banned_tags = req.banned_tags;
       default_css = req.default_css;
